@@ -363,7 +363,7 @@ if (window.location.hash === "") {
         if (!err) {
             //console.log(res);
             var data = d3.nest().key(function(d) { return d.company; }).key(function(d) { return d.date; }).entries(res);
-            main({title: "ShortsellingOverview"}, {key: "AllCompany", values: data});
+            main({title: "ShortsellingOverview"}, {key: "Short Stocks", values: data});
         }
     });
 }
