@@ -1,6 +1,6 @@
 <head>
 <meta charset="utf-8">
-<script src="https://d3js.org/d3.v5.min.js"></script>	
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <style>
 
 body {
@@ -8,7 +8,7 @@ body {
 	margin: auto;
 	width: 650px;
 	font: 18px arial;
-}	
+}
 
 </style>
 </head>
@@ -18,11 +18,11 @@ body {
 <b>Insight for SE0000806994</b>
 <svg id="chart" width="650" height="420"></svg>
 
-Choose year: 
+Choose year:
 <select id="year"></select>
 
-<input type="checkbox" id="sort">	
-Toggle sort 
+<input type="checkbox" id="sort">
+Toggle sort
 
 <script>
 
@@ -46,7 +46,7 @@ function chart(csv) {
 		.text(d => d)
 
 	var svg = d3.select("#chart"),
-		margin = {top: 25, bottom: 10, left: 25, right: 25},
+		margin = {top: 25, bottom: 10, left: 50, right: 25},
 		width = +svg.attr("width") - margin.left - margin.right,
 		height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -54,7 +54,7 @@ function chart(csv) {
 		.range([margin.left, width - margin.right])
 		.padding(0.1)
 		.paddingOuter(0.2)
-	
+
 	var y = d3.scaleLinear()
 		.range([height - margin.bottom, margin.top])
 
@@ -68,7 +68,7 @@ function chart(csv) {
 
 	svg.append("g")
 		.attr("class", "x-axis")
-		
+
 
 	svg.append("g")
 		.attr("class", "y-axis")
@@ -79,7 +79,7 @@ function chart(csv) {
 	function update(year, speed) {
 
 		var data = csv.filter(f => f.year == year)
-	
+
 		y.domain([0, d3.max(data, d => d.value)]).nice()
 
 		svg.selectAll(".y-axis").transition().duration(speed)
