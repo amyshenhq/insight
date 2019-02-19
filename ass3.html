@@ -305,11 +305,33 @@ function main(o, data) {
   }
 
   function text(text) {
+    var offset = 6;
     text.selectAll("tspan")
-        .attr("x", function(d) { return x(d.x) + 6; })
-    text.attr("x", function(d) { return x(d.x) + 6; })
-        .attr("y", function(d) { return y(d.y) + 6; })
-        .style("opacity", function(d) { return this.getComputedTextLength() < x(d.x + d.dx) - x(d.x) ? 1 : 0; });
+        .attr("x", function(d) { return x(d.x) + offset; })
+    text.attr("x", function(d) { return x(d.x) + offset; })
+        .attr("y", function(d) { return y(d.y) + offset; })
+        .style("font-weight", "bold");
+
+    var minFontSize = 4;
+    var maxFontSize = 20;
+    for (i = maxFontSize; i >= minFontSize; i--) {
+      text.style("font-size", function(d){
+      if ((this.getComputedTextLength() + offset) < x(d.x + d.dx) - x(d.x)) {
+        return false;
+      }
+      return i + "px";
+    })
+
+    /*
+    text.style("opacity", function(d) {
+      if (this.getComputedTextLength() < x(d.x + d.dx) - x(d.x)) {
+        return 1;
+      } else {
+        return 0;
+      }
+    })
+    */
+  }
   }
 
   function text2(text) {
