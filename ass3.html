@@ -159,7 +159,7 @@ function main(o, data) {
   initialize(root);
   accumulate(root);
   layout(root);
-  console.log(root);
+  //console.log(root);
   display(root);
 
   if (window.parent !== window) {
@@ -260,7 +260,7 @@ function main(o, data) {
         .style("fill", function(d) { return color(d.key); });
 
     function transition(d) {
-      console.log(d)
+      //console.log(d)
       if (transitioning || !d) return;
       if (d._children[0]._children == undefined) {  // Leaf nodes have no children.
         window.open('insightbarint.html?isin=' + d.key, '_blank');
@@ -335,7 +335,7 @@ function main(o, data) {
 if (window.location.hash === "") {
     d3.json("short.json", function(err, res) {
         if (!err) {
-            console.log(res);
+            //console.log(res);
             var data = d3.nest().key(function(d) { return d.company; }).key(function(d) { return d.date; }).entries(res);
             main({title: "ShortsellingOverview"}, {key: "AllCompany", values: data});
         }
