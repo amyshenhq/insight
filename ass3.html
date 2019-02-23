@@ -40,7 +40,11 @@ rect.parent,
 }
 
 rect.parent {
-    pointer-events: none;
+    cursor: pointer;
+}
+
+rect.parent:hover {
+  opacity: 0.7;
 }
 
 .grandparent rect {
@@ -65,14 +69,18 @@ rect.parent {
   fill: #bbb;
 }
 
+.ctext {
+  font-size: 11px;
+}
+
 </style>
 </head>
 
 <body>
 <div id="chart"></div>
 
-<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script>
 
 
@@ -155,7 +163,7 @@ function main(o, data) {
   initialize(root);
   accumulate(root);
   layout(root);
-  console.log(root);
+  //console.log(root);
   display(root);
 
   if (window.parent !== window) {
@@ -234,7 +242,13 @@ function main(o, data) {
         .text(function(d) { return d.key + " (" + formatNumber(d.value) + ")"; });
     children.append("text")
         .attr("class", "ctext")
-        .text(function(d) { return d.key; })
+        .text(function(d) {
+          var val = d.key;
+          if (!isNaN(val)) {
+            return ("Trader short " + val + "%");
+          }
+          return "ISIN: " + val;
+        })
         .call(text2);
 
     g.append("rect")
@@ -256,7 +270,7 @@ function main(o, data) {
         .style("fill", function(d) { return color(d.key); });
 
     function transition(d) {
-      console.log(d)
+      //console.log(d)
       if (transitioning || !d) return;
       if (d._children[0]._children == undefined) {  // Leaf nodes have no children.
         window.open('insightbarint.html?isin=' + d.key, '_blank');
@@ -301,11 +315,24 @@ function main(o, data) {
   }
 
   function text(text) {
+    var offset = 6;
     text.selectAll("tspan")
-        .attr("x", function(d) { return x(d.x) + 6; })
-    text.attr("x", function(d) { return x(d.x) + 6; })
-        .attr("y", function(d) { return y(d.y) + 6; })
-        .style("opacity", function(d) { return this.getComputedTextLength() < x(d.x + d.dx) - x(d.x) ? 1 : 0; });
+        .attr("x", function(d) { return x(d.x) + offset; })
+    text.attr("x", function(d) { return x(d.x) + offset; })
+        .attr("y", function(d) { return y(d.y) + offset; })
+        .style("font-weight", "bold");
+
+    var minFontSize = 4;
+    var maxFontSize = 20;
+    for (i = maxFontSize; i >= minFontSize; i--) {
+      text.style("font-size", function(d){
+        if ((this.getComputedTextLength() + offset) < x(d.x + d.dx) - x(d.x)) {
+          //cause an error to avoid actual errors
+          return false;
+        }
+        return i + "px";
+      })
+    }
   }
 
   function text2(text) {
@@ -322,18 +349,22 @@ function main(o, data) {
   }
 
   function name(d) {
-    return d.parent
-        ? name(d.parent) + " / " + d.key + " (" + formatNumber(d.value) + ")"
-        : d.key + " (" + formatNumber(d.value) + ")";
+    var val = +d["value"];  //string to int
+    val = val.toFixed(2); //truncate decimals
+    if (d.parent) {
+      return name(d.parent) + " / " + d.key + " (" + val + "%)"
+    } else {
+      return d.key /*+ " (" + val + "%)"*/;
+    }
   }
 }
 
 if (window.location.hash === "") {
     d3.json("short.json", function(err, res) {
         if (!err) {
-            console.log(res);
+            //console.log(res);
             var data = d3.nest().key(function(d) { return d.company; }).key(function(d) { return d.date; }).entries(res);
-            main({title: "ShortsellingOverview"}, {key: "AllCompany", values: data});
+            main({title: "ShortsellingOverview"}, {key: "Short Stocks", values: data});
         }
     });
 }
