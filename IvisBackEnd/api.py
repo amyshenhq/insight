@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, Api
 from module import get_records
 from bson.json_util import dumps
+from json import loads
 from flask_restful import request
 import logging
 logging.basicConfig(filename='error.log',level=logging.ERROR)
@@ -12,7 +13,7 @@ api = Api(app)
 def basic_validations(args):
 
     for k, v in args.items():
-        if k not in ['limit', 'offset']:
+        if k not in ['limit', 'offset', 'filter']:
             return False
 
     try:
@@ -38,6 +39,12 @@ def basic_validations(args):
         logging.error('Invalid offset')
         return False
 
+    try:
+        loads(args.get('filter', "{}"))
+    except:
+        logging.error('Invalid filter')
+        return False
+
     return True
 
 
@@ -50,6 +57,7 @@ class CurrentPositionRecords(Resource):
 
         limit = int(args.get('limit', 500))
         offset = int(args.get('offset', 0))
+        filters = loads(args.get('filter', "{}"))
         records = get_records('current_position', filters, offset, limit)
         if records is None:
             return {}, 401
@@ -66,6 +74,7 @@ class HistPositionRecords(Resource):
 
         limit = int(args.get('limit', 500))
         offset = int(args.get('offset', 0))
+        filters = loads(args.get('filter', "{}"))
         records = get_records('hist_position', filters, offset, limit)
         if records is None:
             return {}, 401
@@ -82,6 +91,7 @@ class Insync2018(Resource):
 
         limit = int(args.get('limit', 500))
         offset = int(args.get('offset', 0))
+        filters = loads(args.get('filter', "{}"))
         records = get_records('insyn_2018', filters, offset, limit)
         if records is None:
             return {}, 401
@@ -97,6 +107,7 @@ class Insync1991(Resource):
 
         limit = int(args.get('limit', 500))
         offset = int(args.get('offset', 0))
+        filters = loads(args.get('filter', "{}"))
         records = get_records('insyn_2018', filters, offset, limit)
         if records is None:
             return {}, 401
@@ -112,6 +123,7 @@ class Instrumenmt(Resource):
 
         limit = int(args.get('limit', 500))
         offset = int(args.get('offset', 0))
+        filters = loads(args.get('filter', "{}"))
         records = get_records('instruments', filters, offset, limit)
         if records is None:
             return {}, 401
